@@ -1,59 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Meta Search Engine </title>
+    <link rel="stylesheet" href="index.css"/>
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <h1> <a href="index.html"><b>Real-time Meta Search</b></a></h1>
+        </div>
+        <ul>
+            <li><a href="#"> Home </a></li>
+            <li><a href="#"> About </a></li>
+            <button class="sign-btn"> Sign up </button>
+        </ul>
+    </nav>
+    <main>
+                <h1> Search Your Queries </h1>
+		<form method="get" action="search.php" >
+                <input class="search-bar"  name="query"  type="text" value="<?php $query = $_GET['query']; echo $query; ?>">
+                <button type="submit" class="search-btn"><img class="search-image" src="mgf_search.svg" alt="search-pic"></button>
+    </main>
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["query"])) {
 
 	// Get the query from the form
 $query = $_GET['query'];
-       // Search Bing
-	   $bing_url = "https://www.bing.com/search?q=" . urlencode($query);
-	   $bing_results = file_get_contents($bing_url);
-	   if (strpos($bing_results, 'We did not find results for') !== false) {
-		   echo "Bing<br>No results found.<br>";
-		   $bing_sorted_results = array();
-	   } else {
-		   // Remove any CSS or JavaScript from the Bing results
-		   $bing_results = preg_replace('/<style\b[^>]*>(.*?)<\/style>/is', "", $bing_results);
-		   $bing_results = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $bing_results);
-		   // Get the search result links and titles from the Bing results
-		   preg_match_all('/<a href="(.*?)".*?>(.*?)<\/a>/', $bing_results, $bing_matches);
-		   $bing_links = $bing_matches[1];
-		   $bing_titles = $bing_matches[2];
-		   // Combine the search result links and titles into an array
-		   $bing_combined_results = array_combine($bing_links,$bing_titles);
-// Sort the combined search results by title
-asort($bing_combined_results);
-$bing_sorted_results = $bing_combined_results;
-echo "<br><br><br>Bing<br>";
-// Display the sorted search results
-foreach ($bing_sorted_results as $link => $title) {
-//$link = preg_replace('/^.?r=https?://localhost(/.)$/', '$1', $link);
-$link = urldecode($link);
-echo "<a href='$link'>$title</a><br>";
-}
-echo "<hr>";
-}
+  // Search Bing
+  $bing_url = "https://www.bing.com/search?q=" . urlencode($query);
+  $bing_results = file_get_contents($bing_url);
+  // Remove any CSS or JavaScript from the Bing results
+  $bing_results = preg_replace('/<style\b[^>]*>(.*?)<\/style>/is', "", $bing_results);
+  $bing_results = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $bing_results);
+  // Get the search result links and titles from the Bing results
+  preg_match_all('/<li class="b_algo"><h2><a href="(.*?)".*?>(.*?)<\/a><\/h2>/', $bing_results, $bing_matches);
+  $bing_links = $bing_matches[1];
+  $bing_titles = $bing_matches[2];
+  // Combine the search result links and titles into an array
+  $bing_combined_results = array_combine($bing_links, $bing_titles);
+  // Sort the combined search results by title
+  asort($bing_combined_results);
+  $bing_sorted_results = $bing_combined_results;
+  echo "<br><h3>Real Time Results from - <h1>Bing:<h1></h3><br>";
+  // Display the sorted search results
+  foreach ($bing_sorted_results as $link => $title) {
+      echo "<a href='$link'>$title</a><br>";
+  }
+  echo "<hr>";
 
 
-// Google search engine URL
-$google_url = "https://www.google.com/search?q=";
 
-// Encode the query for use in the URL
-$encoded_query = urlencode($query);
+  // Google search engine URL
+  $google_url = "https://www.google.com/search?q=";
 
-// Build the Google search URL with the encoded query
-$search_url = $google_url . $encoded_query;
+  // Get the query from the form
+  $query = $_GET['query'];
 
-// Get the search results from Google
-$google_sorted_results = file_get_contents($search_url);
+  // Encode the query for use in the URL
+  $encoded_query = urlencode($query);
 
-// Remove CSS from the search results
-$google_sorted_results = preg_replace('/<link\s.*?>/i', '', $google_sorted_results);
-$google_sorted_results = preg_replace('/<style\b[^>]*>(.*?)<\/style>/is', '', $google_sorted_results);
+  // Build the Google search URL with the encoded query
+  $search_url = $google_url . $encoded_query;
 
-// Remove local host prefix from the links
-$google_sorted_results = str_replace('href="/', 'href="https://www.google.com/', $google_sorted_results);
+  // Get the search results from Google
+  $google_sorted_results = file_get_contents($search_url);
 
-// Display the combined and sorted search results
-echo $google_sorted_results;
+  // Remove CSS from the search results
+  $google_sorted_results = preg_replace('/<link\s.*?>/i', '', $google_sorted_results);
+  $google_sorted_results = preg_replace('/<style\b[^>]*>(.*?)<\/style>/is', '', $google_sorted_results);
+
+  // Remove local host prefix from the links
+  $google_sorted_results = str_replace('href="/', 'href="https://www.google.com/', $google_sorted_results);
+
+  // Remove the Google search bar and input box from the search results
+  $google_sorted_results = preg_replace('/<div class="KpMaL">.*?<\/div><\/div><div class="A8SBwf">/', '', $google_sorted_results);
+
+  // Display the combined and sorted search results
+  echo "<br><br><br><h1>Google:</h1><br>";
+  echo $google_sorted_results;
+
+
+
+
+
 
 
     // Search Yahoo
@@ -75,7 +108,7 @@ echo $google_sorted_results;
         // Sort the combined search results by title
         asort($yahoo_combined_results);
         $yahoo_sorted_results = $yahoo_combined_results;
-        echo "<br><br><br>Yahoo<br>";
+        echo "<br><br><br><h1>Yahoo</h1><br>";
         // Display the sorted search results without the local host prefix
         foreach ($yahoo_sorted_results as $link => $title) {
           
@@ -85,3 +118,5 @@ echo $google_sorted_results;
     }
 }
 ?>
+</body>
+</html>
