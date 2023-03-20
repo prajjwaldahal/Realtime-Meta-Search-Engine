@@ -29,7 +29,7 @@
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["query"])) {
 
 	// Get the query from the form
-$query = $_GET['query'];
+
   // Search Bing
   $bing_url = "https://www.bing.com/search?q=" . urlencode($query);
   $bing_results = file_get_contents($bing_url);
@@ -45,10 +45,13 @@ $query = $_GET['query'];
   // Sort the combined search results by title
   asort($bing_combined_results);
   $bing_sorted_results = $bing_combined_results;
-  echo "<br><h3>Real Time Results from - <h1>Bing:<h1></h3><br>";
+  echo "<br><h3>Real Time Results from -";
+?>
+	<h1>Bing : </h1><form method="get" action="search.php" ><button type="submit"> <b>No Results ? </b> Regenerate  Results from Bing </button></form><br><br>
+<?php
   // Display the sorted search results
   foreach ($bing_sorted_results as $link => $title) {
-      echo "<a href='$link'>$title</a><br>";
+      echo "<br><a href='$link'>$title</a><br>";
   }
   echo "<hr>";
 
@@ -116,6 +119,8 @@ $query = $_GET['query'];
         }
         echo "<hr>";
     }
+}else{
+
 }
 ?>
 </body>

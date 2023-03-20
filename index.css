@@ -80,8 +80,8 @@ main{
 
 .search{
      position: absolute;
-    top: 25%;
-    left: 30%; 
+    top: 15%;
+    left: 50%; 
     display: inline-block;
 }
 .title{
