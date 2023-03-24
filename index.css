@@ -125,3 +125,12 @@ main{
 .search-btn:active{
     opacity: 0.5;
 }
+
+.cpy{
+    margin: 0px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-grow: 1;
+}

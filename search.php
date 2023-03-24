@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,8 +7,12 @@
     <title> Meta Search Engine </title>
     <link rel="stylesheet" href="index.css"/>
 </head>
+<?php
+if (!empty($_GET['query'])) {
+    ?>
+
 <body>
-    <nav>
+<nav>
         <div class="logo">
             <h1> <a href="index.html"><b>Real-time Meta Search</b></a></h1>
         </div>
@@ -25,35 +28,37 @@
                 <input class="search-bar"  name="query"  type="text" value="<?php $query = $_GET['query']; echo $query; ?>">
                 <button type="submit" class="search-btn"><img class="search-image" src="mgf_search.svg" alt="search-pic"></button>
     </main>
+
+
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["query"])) {
+
 
 	// Get the query from the form
-
-  // Search Bing
-  $bing_url = "https://www.bing.com/search?q=" . urlencode($query);
-  $bing_results = file_get_contents($bing_url);
-  // Remove any CSS or JavaScript from the Bing results
-  $bing_results = preg_replace('/<style\b[^>]*>(.*?)<\/style>/is', "", $bing_results);
-  $bing_results = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $bing_results);
-  // Get the search result links and titles from the Bing results
-  preg_match_all('/<li class="b_algo"><h2><a href="(.*?)".*?>(.*?)<\/a><\/h2>/', $bing_results, $bing_matches);
-  $bing_links = $bing_matches[1];
-  $bing_titles = $bing_matches[2];
-  // Combine the search result links and titles into an array
-  $bing_combined_results = array_combine($bing_links, $bing_titles);
-  // Sort the combined search results by title
-  asort($bing_combined_results);
-  $bing_sorted_results = $bing_combined_results;
-  echo "<br><h3>Real Time Results from -";
+    $query = $_GET['query'];
+// Search Bing
+$bing_url = "https://www.bing.com/search?q=" . urlencode($query);
+$bing_results = file_get_contents($bing_url);
+// Remove any CSS or JavaScript from the Bing results
+$bing_results = preg_replace('/<style\b[^>]*>(.*?)<\/style>/is', "", $bing_results);
+$bing_results = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $bing_results);
+// Get the search result links and titles from the Bing results
+preg_match_all('/<li class="b_algo"><h2><a href="(.*?)".*?>(.*?)<\/a><\/h2>/', $bing_results, $bing_matches);
+$bing_links = $bing_matches[1];
+$bing_titles = $bing_matches[2];
+// Combine the search result links and titles into an array
+$bing_combined_results = array_combine($bing_links, $bing_titles);
+// Sort the combined search results by title
+asort($bing_combined_results);
+$bing_sorted_results = $bing_combined_results;
+echo "<br><h3>Real Time Results from  :  </h3><br><br>";
+// Display the sorted search results
 ?>
 	<h1>Bing : </h1><form method="get" action="search.php" ><button type="submit"> <b>No Results ? </b> Regenerate  Results from Bing </button></form><br><br>
 <?php
-  // Display the sorted search results
-  foreach ($bing_sorted_results as $link => $title) {
-      echo "<br><a href='$link'>$title</a><br>";
-  }
-  echo "<hr>";
+foreach ($bing_sorted_results as $link => $title) {
+    echo "<a href='$link'>$title</a><br>";
+}
+echo "<hr>";
 
 
 
@@ -119,9 +124,37 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["query"])) {
         }
         echo "<hr>";
     }
-}else{
-
+}
+else{
+    ?>
+    <nav>
+    <div class="logo">
+        <h1> <a href="index.html"><b>Real-time Meta Search</b></a></h1>
+    </div>
+    <ul>
+        <li><a href="#"> Home </a></li>
+        <li><a href="#"> About </a></li>
+        <button class="sign-btn"> Sign up </button>
+    </ul>
+</nav>
+<main>
+    <div class="search">
+        <div class="title">
+            <h1> Search Your Queries </h1>
+        </div>
+        <div class="search-box">
+    <form method="get" action="search.php">
+            <input class="search-bar"  name="query"  type="text" placeholder="Search Here ">
+            <button type="submit" class="search-btn"><img class="search-image" src="mgf_search.svg" alt="search-pic"></button>
+        </div>
+        <br><b><h3 style="color:red">*** PLEASE ENTER SOME QUERY TO SEARCH ***</h3></br>
+    </div>
+</main>
+<?php
 }
 ?>
+<div class="cpy" >
+    <br> <br><b><h3  style="color:green">©prj_harsh_anurag</h3></br>
+</div>
 </body>
 </html>
